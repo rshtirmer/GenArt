@@ -1,4 +1,5 @@
 var circles = [];
+var originX, originY
 let Blue = '#3EC1D3'
 let White = '#F6F7D7'
 let Orange = '#FF9A00'
@@ -35,6 +36,8 @@ function setup() {
       break;
     }
   }
+  originX = random(20, 320)
+  originY = random(20, 320)
 }
 
 function draw(){
@@ -43,20 +46,30 @@ function draw(){
   for (var i = 0; i < circles.length; i++) {
     let offsetX = 0
     let offsetY = 0
-    if ((mouseX <= width && mouseX >= 0) && (mouseY <= height && mouseY >= 0)){
-        let d = dist(circles[i].x, circles[i].y, mouseX, mouseY);
+    if ((originX <= width && originX >= 0) && (originY <= height && originY >= 0)){
+        let d = dist(circles[i].x, circles[i].y, originX, originY);
         if (d < 50){
-            offsetX = d
-            offsetY = d
+//            offsetX = d
+ //           offsetY = d
+            if (originX >= circles[i].x){
+              offsetX = offsetX + 50
+          } else {
+            offsetX = offsetX - 50
+          }
+          if (originY >= circles[i].y){
+            offsetY = offsetY + 50
+        } else {
+          offsetY = offsetY - 50
         }
-        if (mouseX >= width/2){
-            offsetX = offsetX * -1
-        }
+      }
     }
     
     stroke(50);
     fill(circles[i].c)
     ellipse(circles[i].x+random(-1,1) - offsetX, circles[i].y+random(-1,1) - offsetY, circles[i].r * 2, circles[i].r * 2);
+    fill("#9999cc")
+    ellipse(originX, originY, 20, 20);
+
   }   
 }
 
