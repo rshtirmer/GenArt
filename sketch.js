@@ -1,36 +1,68 @@
-
+var circles = [];
 let Blue = '#3EC1D3'
 let White = '#F6F7D7'
 let Orange = '#FF9A00'
 let Red = '#FF165D'
 let fillColors = [White, Blue, Orange, Red]
 
-let Xs = []
-let Ys = []
-let colors = []
-
 function setup() {
-    createCanvas(350, 350);
-    var seed = random(1000);
-    randomSeed(seed);  
-    for(let i = 0; i <= 50; i++){
-        Xs.push(random(20, width-20), random(20, height-20))
-        Ys.push(random(20, width-20), random(20, height-20))
-        colors.push(random(fillColors))
+  createCanvas(350, 350);
+  frameRate(300);
+  var protection = 0;
+  while (circles.length < 200) {
+    var circle = {
+      x: random(20, width-20),
+      y: random(20, height-20),
+      r: random(5, 15),
+      c: random(fillColors)
+    };
+
+    var overlapping = false;
+    for (var j = 0; j < circles.length; j++) {
+      var other = circles[j];
+      var d = dist(circle.x, circle.y, other.x, other.y);
+      if (d < circle.r + other.r + random(3,10)) {
+        overlapping = true;
+      }
     }
-}
-  
-function draw() {
-    clear()
-    background(White);
-    for(let i = 0; i <= 50; i++){
-        drawRandomCircle(Xs[i]+random(-2,2),Ys[i]+random(-2,2), colors[i])
+
+   if (!overlapping) {
+      circles.push(circle);
     }
+
+    protection++;
+    if (protection > 10000) {
+      break;
+    }
+  }
 }
 
-function drawRandomCircle(x, y, color){ 
+function draw(){
+  clear()
+  background(White);
+  for (var i = 0; i < circles.length; i++) {
+    let offsetX = 0
+    let offsetY = 0
+    if ((mouseX <= width && mouseX >= 0) && (mouseY <= height && mouseY >= 0)){
+        let d = dist(circles[i].x, circles[i].y, mouseX, mouseY);
+        if (d < 50){
+            offsetX = d
+            offsetY = d
+        }
+        if (mouseX >= width/2){
+            offsetX = offsetX * -1
+        }
+    }
+    
     stroke(50);
-    fill(color)
-    console.log(x, y)
-    ellipse(x, y, 15, 15);
-}  
+    fill(circles[i].c)
+    ellipse(circles[i].x+random(-1,1) - offsetX, circles[i].y+random(-1,1) - offsetY, circles[i].r * 2, circles[i].r * 2);
+  }   
+}
+
+function mouseClicked() {
+  colors = []
+  for(let i = 0; i <= circles.length; i++){
+      circles[i].c = random(fillColors)
+  }
+}
